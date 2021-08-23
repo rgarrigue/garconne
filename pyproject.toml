@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "garconne"
+version = "0.1.0"
+description = "A basic URL shortener"
+authors = ["Rémy Garrigue"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.68.0"
+uvicorn = {extras = ["standard"], version = "^0.15.0"}
+loguru = "^0.5.3"
+redis = "^3.5.3"
+prometheus-fastapi-instrumentator = "^5.7.1"
+
+[tool.poetry.dev-dependencies]
+black = "^21.7b0"
+isort = "^5.9.3"
+flake8 = "^3.9.2"
+pytest = "^6.2.4"
+requests = "^2.26.0"
+flake8-colors = "^0.1.9"
+mypy = "^0.910"
+types-redis = "^3.5.6"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,54 @@
+---
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+    - repo: git@github.com:pre-commit/pre-commit-hooks
+      rev: v4.0.1
+      hooks:
+          - id: check-added-large-files
+          - id: check-executables-have-shebangs
+          - id: check-merge-conflict
+          - id: check-shebang-scripts-are-executable
+          - id: check-xml
+          - id: check-yaml
+            args:
+              - --unsafe
+          - id: debug-statements
+          - id: detect-aws-credentials
+          - id: detect-private-key
+          - id: end-of-file-fixer
+          - id: mixed-line-ending
+          - id: pretty-format-json
+            args:
+                - --autofix
+                - --indent=2
+          - id: trailing-whitespace
+    - repo: https://github.com/jumanjihouse/pre-commit-hooks
+      rev: 2.1.5
+      hooks:
+          - id: markdownlint
+          - id: shellcheck
+          - id: shfmt
+    - repo: local
+      hooks:
+          - id: flake8
+            name: Flake8 - Code Linter
+            entry: poetry run flake8
+            language: system
+            types: [python]
+          - id: black
+            name: Black - Code Style
+            entry: poetry run black
+            args:
+                - -q
+                - --safe
+                - --line-length=120
+            language: system
+            types: [python]
+          - id: isort
+            name: Isort - Sort Imports
+            entry: poetry run isort
+            args:
+                - -e
+            language: system
+            types: [python]

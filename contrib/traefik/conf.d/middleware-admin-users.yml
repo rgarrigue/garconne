@@ -1,0 +1,6 @@
+http:
+  middlewares:
+    admin-users:
+      basicAuth:
+        users:
+          - "admin:$2y$10$JaEYLp1I4D93oTls502DEO.UzoIRkPUweI/IFkKVQKfNycxUZTzee" # admin / garconne

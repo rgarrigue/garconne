@@ -1,0 +1,68 @@
+---
+# This is the STATIC configuration file, only options in
+# https://docs.traefik.io/v2.4/reference/static-configuration/file/
+# will work here, otherwise put it in conf.d/dedicated-file.yml (and vice versa)
+
+accesslog: true
+
+# https://docs.traefik.io/operations/api/
+api:
+  insecure: false
+  dashboard: true
+  debug: false
+
+certificatesResolvers:
+  letsencrypt: # random key name
+    acme:
+      email: "root@localhost"
+      storage: "/etc/traefik/acme.json"
+      httpChallenge:
+        entryPoint: "web"
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entrypoint:
+          scheme: "https"
+          to: "websecure"
+  websecure:
+    address: ":443"
+    http:
+      tls:
+        options: mintls@file
+        certResolver: letsencrypt
+      middlewares:
+        - compression@file
+        - hsts@file
+        - security-headers@file
+
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+# https://docs.traefik.io/observability/logs/
+log:
+  level: "INFO"
+  # format: <remote_IP_address> - <client_user_name_if_available> [<timestamp>] "<request_method> <request_path> <request_protocol>" <origin_server_HTTP_status> <origin_server_content_size> "<request_referrer>" "<request_user_agent>" <number_of_requests_received_since_Traefik_started> "<Traefik_router_name>" "<Traefik_server_URL>" <request_duration_in_ms>ms
+
+metrics:
+  prometheus:
+    {}
+    # addEntryPointsLabels: true
+    # addRoutersLabels: true
+    # addServicesLabels: true
+
+# https://doc.traefik.io/traefik/operations/ping/
+ping: {}
+
+providers:
+  file:
+    directory: /etc/traefik/conf.d
+    watch: true
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: garconne_traefik
+    watch: true

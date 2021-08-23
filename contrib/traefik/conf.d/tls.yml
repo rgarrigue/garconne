@@ -1,0 +1,18 @@
+---
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/certs/localhost.crt.pem
+        keyFile: /etc/certs/localhost.key.pem
+  options:
+    mintls: # random key name
+      minVersion: "VersionTLS12"
+      sniStrict: '{{ $domain := env "DOMAIN" }}{{ if contains "localhost" $domain }}false{{ else }}true{{ end }}'
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305

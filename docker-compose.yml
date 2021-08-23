@@ -1,0 +1,101 @@
+---
+version: "3"
+
+networks:
+  traefik:
+  app:
+    internal: true
+
+services:
+  app:
+    build: .
+    image: localhost/garconne
+    restart: always
+    networks:
+      - app
+      - traefik
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.app.entrypoints=websecure
+      - traefik.http.routers.app.rule=Host(`app.${DOMAIN}`,`${DOMAIN}`)
+      - traefik.http.routers.app.service=app
+      - traefik.http.services.app.loadbalancer.server.port=8000
+
+  grafana:
+    image: grafana/grafana:8.1.1
+    restart: always
+    networks:
+      - traefik
+    volumes:
+      - ./contrib/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./contrib/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./contrib/grafana/notifiers:/etc/grafana/provisioning/notifiers
+      - grafana-data:/var/lib/grafana
+    env_file: .grafana.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.middlewares=admin-users@file
+      - traefik.http.routers.grafana.rule=Host(`grafana.${DOMAIN}`)
+      - traefik.http.routers.grafana.service=grafana
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+
+  prometheus:
+    image: prom/prometheus:v2.29.1
+    restart: always
+    networks:
+      - traefik
+    volumes:
+      - ./contrib/prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.entrypoints=websecure
+      - traefik.http.routers.prometheus.middlewares=admin-users@file
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN}`)
+      - traefik.http.routers.prometheus.service=prometheus
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+
+  traefik:
+    image: traefik:v2.5
+    restart: always
+    networks:
+      - traefik
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./contrib/certs:/etc/certs
+      - ./contrib/traefik:/etc/traefik
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    env_file: .env
+
+  redis:
+    image: "redis:6-alpine"
+    networks:
+      - app
+    volumes:
+      - redis-data:/data
+
+  redisinsight:
+    image: redislabs/redisinsight
+    restart: always
+    networks:
+      - app
+      - traefik
+    volumes:
+      - redisinsight-data:/db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.redisinsight.entrypoints=websecure
+      - traefik.http.routers.redisinsight.middlewares=admin-users@file
+      - traefik.http.routers.redisinsight.rule=Host(`redis.${DOMAIN}`)
+      - traefik.http.routers.redisinsight.service=redisinsight
+      - traefik.http.services.redisinsight.loadbalancer.server.port=8001
+
+volumes:
+  grafana-data:
+  prometheus-data:
+  redis-data:
+  redisinsight-data:

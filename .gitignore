@@ -1,0 +1,10 @@
+__pycache__
+.mypy_cache
+.pytest_cache
+contrib/certs/*
+!contrib/certs/.gitkeep
+contrib/traefik/acme.json
+jaggr
+jplot
+mkcert
+vegeta

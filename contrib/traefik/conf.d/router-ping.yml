@@ -1,0 +1,10 @@
+---
+http:
+  routers:
+    ping:
+      rule: Host(`traefik.{{ env "DOMAIN" }}`) && Path(`/ping`)
+      service: ping@internal
+      middlewares:
+        - hsts@file
+        - redirect-to-https@file
+        - security-headers@file

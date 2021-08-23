@@ -1,0 +1,11 @@
+---
+http:
+  routers:
+    api:
+      rule: Host(`traefik.{{ env "DOMAIN" }}`)
+      service: api@internal
+      middlewares:
+        - admin-users@file
+        - hsts@file
+        - redirect-to-https@file
+        - security-headers@file
