@@ -12,7 +12,7 @@ build:
 	docker-compose build --pull --no-cache
 
 run:
-	docker-compose up -d
+	docker-compose up -d --scale app=2
 
 logs:
 	docker-compose logs -f $(LOGS)
@@ -25,10 +25,12 @@ lint:
 	shellcheck contrib/scripts/*.sh
 
 unit_test:
-	poetry run pytest
+	# Using FastAPI's TestClient means we need to run the unit tests inside the compose network
+	# Running "poetry run pytest" fails because it's unable to resolve redis
+	docker-compose run --rm --entrypoint 'sh -c' app 'pip3 install pytest requests ; pytest'
 
 load_test:
-	echo "POST https://app.localhost/api/v1/shorten/https://user:password@test.com:443/test/index.html" | vegeta attack -duration=300s -rate=10 -insecure | vegeta report
+	echo "POST https://app.localhost/api/v1/shorten/https://user:password@test.com:443/test/index.html" | vegeta attack -duration=300s -rate=10 | vegeta report
 	# echo "POST http://app.localhost:8000/api/v1/shorten/https://user:password@test.com:443/test/index.html" | vegeta attack -duration=300s -rate=10 | vegeta report
 
 clean:
