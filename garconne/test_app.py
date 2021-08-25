@@ -15,6 +15,12 @@ def test_health():
     assert health.status_code == 200, health
 
 
+def test_metrics():
+    metrics = client.get("/metrics")
+    assert metrics.status_code == 200, metrics
+    assert "HELP" in metrics.text, metrics.text
+
+
 def test_shorten():
     shorten = client.post(f"/api/v1/shorten/{test_url}")
     assert shorten.status_code == 200, shorten

@@ -21,6 +21,22 @@ services:
       - traefik.http.routers.app.service=app
       - traefik.http.services.app.loadbalancer.server.port=8000
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    restart: always
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.cadvisor.entrypoints=websecure
+      - traefik.http.routers.cadvisor.middlewares=admin-users@file
+      - traefik.http.routers.cadvisor.rule=Host(`cadvisor.${DOMAIN}`)
+      - traefik.http.routers.cadvisor.service=cadvisor
+      - traefik.http.services.cadvisor.loadbalancer.server.port=8080
+
   grafana:
     image: grafana/grafana:8.1.1
     restart: always
