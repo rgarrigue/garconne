@@ -11,5 +11,6 @@ scrape_configs:
     static_configs:
       - targets:
           - "app:8000"
+          - "cadvisor:8080"
           - "prometheus:9090"
           - "traefik:8082"

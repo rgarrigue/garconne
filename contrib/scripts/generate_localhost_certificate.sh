@@ -7,6 +7,7 @@ if [ ! -f contrib/certs/localhost.key.pem ]; then
     -key-file contrib/certs/localhost.key.pem \
     localhost \
     app.localhost \
+    cadvisor.localhost \
     grafana.localhost \
     prometheus.localhost \
     redis.localhost \

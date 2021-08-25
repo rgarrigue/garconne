@@ -17,8 +17,8 @@ make dev
 # Same, only displaying the app logs
 LOGS=app make dev
 
-# Remove the containers
-make clean
+# Stop and remove the app local container image
+make stop
 # Remove the containers, certificates, caches, binaries...
 make wipe
 ```
@@ -57,7 +57,7 @@ curl http://localhost:8000/api/v1/lookup/$ID
 
 About the code itself
 
-- Add [gunicorn](https://github.com/tiangolo/uvicorn-gunicorn-docker/blob/master/docker-images/gunicorn_conf.py)
+- Add [gunicorn](https://github.com/tiangolo/uvicorn-gunicorn-docker/blob/master/docker-images/gunicorn_conf.py) [tweak](https://github.com/stephenhillier/starlette_exporter#multiprocess-mode-gunicorn-deployments)
 - Organize the code
 - Improve the workflow
   - Execute pytest in the docker-compose context ?
