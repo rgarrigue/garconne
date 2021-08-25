@@ -13,6 +13,7 @@ build:
 
 run:
 	docker-compose up -d --scale app=2
+	sleep 60
 
 logs:
 	docker-compose logs -f $(LOGS)
