@@ -58,7 +58,7 @@ services:
       - traefik.http.services.prometheus.loadbalancer.server.port=9090
 
   traefik:
-    image: traefik:v2.5
+    image: traefik:v2.4
     restart: always
     networks:
       - traefik
